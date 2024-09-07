@@ -29,9 +29,9 @@ bool SetFollowCommand(qoe::commandArgData commandData)
     if (commandData["t"] == "1")
         cout<<"Hello,this test flag was target";
     //临时配置
-    if (commandData[ARG_Port_ReportServer] != qoeCArgNull);
+    if (commandData[ARG_Port_ReportServer] != qoeCArgNull)
         serverConfig.port = stoi(commandData[ARG_Port_ReportServer]);
-    if (commandData[ARG_Port_NapServer] != qoeCArgNull);
+    if (commandData[ARG_Port_NapServer] != qoeCArgNull)
         serverConfig.port = stoi(commandData[ARG_Port_NapServer]);
     //命令
     return true;
