@@ -7,7 +7,7 @@
 |-  Port    端口（同Name）
 |-  Target  触发词（命令行）
 |-  Host    主机(ip)(同Name)
-|-  RP      ReceiveParameters
+|-  RP      ReceiveParameters，是否需要值
 */
 
 //临时配置

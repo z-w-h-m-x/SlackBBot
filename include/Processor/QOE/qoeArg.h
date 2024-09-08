@@ -1,5 +1,10 @@
 #pragma once
 
+/*
+这是一个史山，能用，也就仅限能用很多功能都没有（例如错误的tag提示、对于引号处理）
+It works, but only if it works. Many features are missing (such as error tag hints, handling of quotation marks).
+*/
+
 #include <string>
 #include <map>
 #include <vector>

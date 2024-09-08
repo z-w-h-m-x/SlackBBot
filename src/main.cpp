@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "SDL.h"
+#include "SDL_filesystem.h"
 
 #include "json.hpp"
 #include "httplib.h"
@@ -21,6 +22,8 @@ int main(int argc,char* argv[])
         cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
         return -1;
     }
+
+    perfPath = SDL_GetPrefPath("SlackDev","SlackBot");
 
     cout<<"QNTBOT DEV\n";
 
