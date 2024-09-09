@@ -43,5 +43,5 @@ target_link_libraries(slackbot
     $<$<BOOL:${MINGW}>:cryptui>
 )
 
-file(COPY "include/Plugin/Plugin_Base.h" DESTINATION "./bin/include/${PROJECT_NAME}/Plugin_Base.h")
+file(COPY "include/Plugin/Plugin" DESTINATION "./bin/include/${PROJECT_NAME}/")
 file(COPY "doc/" DESTINATION "./bin/PluginDevelopmentDocumentation/")
