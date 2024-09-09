@@ -23,7 +23,7 @@ this is a doc to guide that how to create a plugin for this program
 
 ## 前提条件
 
-任意C/C++开发环境，本程序完整版（指需要有include目录），SDL2（只需要用到
+任意C/C++开发环境，本程序完整版（指需要有include目录）
 
 当然你也可以选择其他语言。但是比较麻烦（需另外实现读取）
 
