@@ -18,17 +18,19 @@
 */
 
 #include "GlobalData.h"
+#include "ProgramInfo.h"
 
 #include <iostream>
 
 #include "SDL.h"
 #include "SDL_filesystem.h"
 
-#include "json.hpp"
 #include "httplib.h"
 #include "windows.h"
 
+#include "Data/Data.h"
 #include "Processor/CommandProcessor.h"
+#include "Processor/InitializingFramework.h"
 
 using namespace std;
 
@@ -42,9 +44,12 @@ int main(int argc,char* argv[])
         return -1;
     }
 
-    perfPath = SDL_GetPrefPath("SlackDev","SlackBot");
+    perfPath = SDL_GetPrefPath("SlackBotDev","SlackBot");
 
-    cout<<"QNTBOT DEV\n";
+    SLB_Init();
+
+    cout<<ProjectName<<" "<<ProjectVersion<<endl
+        <<"Built in "<<CMAKE_SYSTEM_NAME<<endl;
 
     RegisterCommandRule();
     SetFollowCommand(qoe::AnalysisArgOptToMap(argc,argv));

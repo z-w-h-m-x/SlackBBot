@@ -1,0 +1,6 @@
+#pragma once
+
+#define ProjectName "@PROJECT_NAME@"
+#define ProjectVersion "@PROJECT_VERSION@"
+#define CMAKE_SYSTEM_NAME "@CMAKE_SYSTEM_NAME@"
+#define CMAKE_MAKE_PROGRAM "@CMAKE_MAKE_PROGRAM@"

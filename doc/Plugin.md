@@ -41,23 +41,58 @@ this is a doc to guide that how to create a plugin for this program
 
 头文件中已定义导出，还有程序的API
 
-看不懂写什么？去看看示例
+看不懂写什么？去看示例！
 
 ## 插件分类
 
-|名称类别|功能|备注|
-|-|-|-|
-|custom|功能为自定义插件|暂时保留|
-|chat|
+|名称类别|枚举值|功能|备注|
+|-|-|-|-|
+|custom|0|功能为自定义插件|暂时保留|
+|filter|2|过滤器
+|action|3|行为|例如戳一戳，好友添加申请
 
 ## 插件接口定义
 
 对应[分类](#插件分类)所须实现的函数
 
-custom类型为可
-|函数名|||
-|-|-|-|
+custom可定义以下的一个或多个任意函数
 
+### fillter
+|函数名|返回值类型|参数，<参数>...|作用（功能）|
+|:-|:-:|:-:|:-|
+[Fillter_AfterReceiveMessage](#fillter通用)|Bool|slb::ChatMessage|作用于收到消息后
+[Fillter_BeforeIntoRoom](#fillter通用)|Bool|slb::ChatMessage|作用于消息进入房间之前
 
+#### Fillter通用
+
+|返回值|意义|
+|-|-|
+true|通过（允许向下传递）
+false|过滤
+
+```cpp
+bool Fillter_XXXXX(ChatMessage message)
+{
+    bool _returnValue = true;
+    /*Code*/
+    return _returnValue;
+}
+```
 
 ## 程序接口定义
+
+### Room
+|函数名|返回值类型|参数，<参数>...|作用（功能）|
+|:-|:-:|:-:|:-|
+[Room_RegisterNewStaus](#Room_RegisterNewStaus)|bool|String|注册状态
+
+#### Room_RegisterNewStaus
+
+|返回值|意义|
+|-|-|
+true|成功
+false|失败（存在冲突）
+
+```cpp
+bool Room_RegisterNewStaus(string stausName);
+```

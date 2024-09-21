@@ -12,5 +12,6 @@ enum PluginType
     //指定值求稳定
     custom = 0,
     chat = 1,
-    filter = 2
+    filter = 2,
+    action = 3
 };

@@ -1,6 +1,6 @@
 # SlackBot
 
-以NapCatQQ为接口API模板的信息处理及响应框架
+暂时以NapCatQQ实现作为接口的API请求框架
 
 注意：项目名缩写为SLB
 
@@ -23,11 +23,17 @@
 
 ## 免责声明
 
-- 软件并不提供任何可以使用的API，并不具备实际性应答能力，请勿用于违法犯罪
+- 软件并不提供任何可以使用的实现API接口，并不具备实际性应答能力，请勿用于违法犯罪
 
 - 代码仅供交流学习，后果自负，作者概不负责
 
 - 项目名的缩写**不**为```S B```，并没有任何辱骂人的意思，只是巧合
+
+- 作者指所有贡献者（SlackBotDevelopments）
+
+## TODO
+
+NULL
 
 ## GPLv3作用域
 
@@ -40,6 +46,10 @@ include/Plugin/Plugin文件夹中的内容不使用GPLv3协议，使用MIT（对
 注意！这只是框架，你所想要的功能可能需要安装或自行编写插件
 
 ### 预构建
+
+前提：需安装SDL2运行时文件（系统路径可以找到）
+
+给Windows用户：预构建包没有含有sdl2运行时，可以自行去下载后放置在软件目录下
 
 前往Releases下载对应的版本，运行slackbot即可
 
@@ -60,7 +70,7 @@ include/Plugin/Plugin文件夹中的内容不使用GPLv3协议，使用MIT（对
 - [json](https://github.com/nlohmann/json)
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib)
 
-在项目根目录创建thirdparty文件夹，其中放入json和httplib库文件
+在项目根目录创建名为```thirdparty```的文件夹，其中放入json和httplib的头文件
 
 like this
 ```
@@ -73,14 +83,14 @@ thirdparty
 
 需满足需求
 
-```sh
+```shell
 mkdir build & cd build & cmake .. & make
 ```
 
 注意：可能需要指定cmake配置生成器
 
 e.g.
-```sh
+```shell
 cmake .. -G "MinGW Makefiles"
 ```
 
