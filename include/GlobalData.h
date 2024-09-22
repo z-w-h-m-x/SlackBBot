@@ -8,7 +8,9 @@
 #include "SLBLog.h"
 
 //Global variable
-static Data::ServerData serverConfig;
-static std::string programPath;
-static std::string perfPath;
-static SLBLog logger;
+extern Data::ServerData serverConfig;
+extern std::string programPath;
+extern std::string perfPath;
+extern SLBLog logger;
+
+extern bool disableLogSaving;

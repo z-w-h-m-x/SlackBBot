@@ -46,13 +46,13 @@ int main(int argc,char* argv[])
 
     perfPath = SDL_GetPrefPath("SlackBotDev","SlackBot");
 
+    RegisterCommandRule();
+    SetFollowCommand(qoe::AnalysisArgOptToMap(argc,argv));
+
     SLB_Init();
 
     cout<<ProjectName<<" "<<ProjectVersion<<endl
         <<"Built in "<<CMAKE_SYSTEM_NAME<<endl;
-
-    RegisterCommandRule();
-    SetFollowCommand(qoe::AnalysisArgOptToMap(argc,argv));
 
     return 0;
 }

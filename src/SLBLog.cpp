@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <chrono>
+#include <sstream>
 #include <string>
 
 using namespace std;
@@ -17,18 +18,22 @@ const char * GetCurrentTimeString()
     std::time_t now_time_t = system_clock::to_time_t(now);
     std::tm* now_tm = localtime(&now_time_t);
 
-    char buffer[128];
-    strftime(buffer,sizeof(buffer),"%F %T", now_tm);
-
     chrono::nanoseconds ns;
 
     ns = chrono::duration_cast<chrono::nanoseconds>(now.time_since_epoch()) % 1000000000;
 
     std::string tmp;
 
-    tmp = buffer;
+    std::ostringstream oss;
+    oss << (now_tm->tm_year + 1900) << "."; // tm_year 是从 1900 年开始的年数
+    oss << (now_tm->tm_mon + 1) << ".";     // tm_mon 是从 0 开始的月份
+    oss << now_tm->tm_mday << " ";
+    oss << now_tm->tm_hour << ":";
+    oss << now_tm->tm_min << ":";
+    oss << now_tm->tm_sec << ".";
+    oss << std::setw(9) << std::setfill('0') << ns.count();
 
-    return tmp.c_str();
+    return oss.str().c_str();
 
 }
 
@@ -47,6 +52,8 @@ void SLBLog::Close()
 
 bool SLBLog::File_Init(const char *filePath)
 {
+    if (mode == 2) return true;
+
     logFile.open(filePath);
     if (!logFile.good())
     {

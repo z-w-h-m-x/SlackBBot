@@ -43,3 +43,8 @@
 #define ARG_Target_Save_Config "--save"
 #define ARG_Description_Save_config "是否保存参数"
 #define ARG_RP_Save false
+
+#define ARG_DisableLogSaving "DisLogSaving"
+#define ARG_Target_DisableLogSaving "-disable--FL"
+#define ARG_Description_Disable "禁用输出日志到文件"
+#define ARG_RP_DisableLogSaving false
