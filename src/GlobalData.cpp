@@ -6,4 +6,6 @@ std::string programPath;
 std::string perfPath;
 SLBLog logger;
 
+IServer* server;
+
 bool disableLogSaving = false;

@@ -65,6 +65,23 @@ public:
     }
 
     template <typename T>
+    void Screen(T text)
+    {
+        std::cout << text << std::endl;
+    }
+
+    template <typename T>
+    void Print(T text)
+    {
+        if (mode == 0 || mode == 2)
+            std::cout << text << std::endl;
+        if (isOpenFile && mode < 2)
+        {
+            logFile << text << std::endl;
+        }
+    }
+
+    template <typename T>
     SLBLog* operator<<(T text)
     {
         PrintMessage(text);

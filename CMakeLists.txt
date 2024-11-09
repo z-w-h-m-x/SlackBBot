@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 
 project(SlackBot VERSION 0.0.0.1)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./bin/)
 
 configure_file (
@@ -20,6 +20,9 @@ aux_source_directory(src SlackBot_SRC)
 aux_source_directory(src/Data SlackBot_Data_SRC)
 aux_source_directory(src/Processor SlackBot_Processor_SRC)
 aux_source_directory(src/Plugin SlackBot_Plugin_SRC)
+aux_source_directory(src/Network Network)
+aux_source_directory(src/Network/ReportingServer Network_Server)
+aux_source_directory(src/Nerwork/Client Network_Client)
 
 aux_source_directory(plugins/dev-test Plugin_DevTest_FILES)
 
@@ -36,6 +39,9 @@ add_executable(slackbot
     ${SlackBot_Processor_SRC}
     ${SlackBot_Plugin_SRC}
     ${SlackBot_Data_SRC}
+    ${Network}
+    ${Network_Server}
+    ${Network_Client}
     src/Processor/QOE/qoeArg.cpp
 )
 
@@ -48,6 +54,6 @@ target_link_libraries(slackbot
     $<$<BOOL:${MINGW}>:cryptui>
 )
 
-file(COPY "include/Plugin/Plugin" DESTINATION "./bin/include/${PROJECT_NAME}/")
+file(COPY "include/Plugin/Plugin/" DESTINATION "./bin/include/${PROJECT_NAME}/")
 file(COPY "doc/" DESTINATION "./bin/PluginDevelopmentDocumentation/")
-file(COPY "NOTICE.txt" DESTINATION "./bin/")
+#file(COPY "NOTICE.txt" DESTINATION "./bin/")

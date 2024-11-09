@@ -54,7 +54,7 @@ bool SLBLog::File_Init(const char *filePath)
 {
     if (mode == 2) return true;
 
-    logFile.open(filePath);
+    logFile.open(filePath,ios::app);
     if (!logFile.good())
     {
         CloseFileStream();

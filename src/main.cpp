@@ -17,13 +17,10 @@
 
 */
 
-#include "GlobalData.h"
-#include "ProgramInfo.h"
-
 #include <iostream>
 
-#include "SDL.h"
-#include "SDL_filesystem.h"
+#include "SlackBot.h"
+#include "Processor/ProgramStop.h"
 
 #include "httplib.h"
 #include "windows.h"
@@ -31,6 +28,8 @@
 #include "Data/Data.h"
 #include "Processor/CommandProcessor.h"
 #include "Processor/InitializingFramework.h"
+#include "Plugin/PluginManager.h"
+#include "Network/ReportingServer/OneBot11.h"
 
 using namespace std;
 
@@ -44,15 +43,43 @@ int main(int argc,char* argv[])
         return -1;
     }
 
+    //获取配置目录
     perfPath = SDL_GetPrefPath("SlackBotDev","SlackBot");
 
+    //命令行
     RegisterCommandRule();
     SetFollowCommand(qoe::AnalysisArgOptToMap(argc,argv));
 
-    SLB_Init();
+    SLB_Init();//初始化
 
     cout<<ProjectName<<" "<<ProjectVersion<<endl
         <<"Built in "<<CMAKE_SYSTEM_NAME<<endl;
 
-    return 0;
+    if ( !LoadPlugin() )
+    {
+        logger.PrintError("The plugin loading state is abnormal");
+    }
+
+    Server_OneBot11 OneBot11;
+    server = &OneBot11;
+
+    server->Init();
+    server->Run("0.0.0.0",11451);
+
+    std::cout << "Press Enter to stop the server..." << std::endl;
+    std::cin.get();  // 等待用户按下回车键
+
+    Stop();
+}
+
+void Stop()
+{
+    logger.Screen("wait server close");
+    server->Stop();
+    ProgramQuit();
+}
+
+void ProgramQuit()
+{
+    exit(0);
 }
