@@ -22,14 +22,14 @@ aux_source_directory(src/Processor SlackBot_Processor_SRC)
 aux_source_directory(src/Plugin SlackBot_Plugin_SRC)
 aux_source_directory(src/Network Network)
 aux_source_directory(src/Network/ReportingServer Network_Server)
-aux_source_directory(src/Nerwork/Client Network_Client)
+aux_source_directory(src/Network/Client Network_Client)
 
 aux_source_directory(plugins/dev-test Plugin_DevTest_FILES)
 
 find_package(SDL2 REQUIRED)
 # find_package(SDL2_net REQUIRED)
 
-add_library(Plugin_DevTest SHARED ${Plugin_DevTest_FILES})
+add_library(Plugin_DevTest SHARED ${Plugin_DevTest_FILES} include/Plugin/Plugin/Plugin_Base.cpp)
 
 set_target_properties(Plugin_DevTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ./bin/plugin/)
 set_target_properties(Plugin_DevTest PROPERTIES PREFIX "")
@@ -57,3 +57,5 @@ target_link_libraries(slackbot
 file(COPY "include/Plugin/Plugin/" DESTINATION "./bin/include/${PROJECT_NAME}/")
 file(COPY "doc/" DESTINATION "./bin/PluginDevelopmentDocumentation/")
 #file(COPY "NOTICE.txt" DESTINATION "./bin/")
+
+file(COPY "include/Message/MessageDefinition.h" DESTINATION "./bin/include/${PROJECT_NAME}/MessageDefinition.h")

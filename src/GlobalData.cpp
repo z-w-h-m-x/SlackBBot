@@ -7,5 +7,7 @@ std::string perfPath;
 SLBLog logger;
 
 IServer* server;
+IClient* client;
+httplib::Client clnt("127.0.0.1");
 
 bool disableLogSaving = false;

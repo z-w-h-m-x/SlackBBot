@@ -12,6 +12,7 @@ this is a doc to guide that how to create a plugin for this program
 
 - [前提条件](#前提条件)
 - [插件分类](#插件分类)
+- [结构定义](#结构定义)
 - [插件接口定义](#插件接口定义)
 - [程序接口定义](#程序接口定义)
 
@@ -43,25 +44,54 @@ this is a doc to guide that how to create a plugin for this program
 
 看不懂写什么？去看示例！
 
-## 插件分类
+## 方法/函数分类
+
+附：这部分供统计使用。实际不需要用到。
 
 |名称类别|枚举值|功能|备注|
 |-|-|-|-|
 |custom|0|功能为自定义插件|暂时保留|
+|init|1|初始化函数
 |filter|2|过滤器
 |action|3|行为|例如戳一戳，好友添加申请
+|message|4|聊天消息
+|notice|5|系统消息
+
+## 结构定义
+
+### slb::
+
+#### MessageContent
+
+in MessageDefinition.h
 
 ## 插件接口定义
 
-对应[分类](#插件分类)所须实现的函数
+### Base
 
-custom可定义以下的一个或多个任意函数
+该部分已有在``Plugin_Base.h``中定义，引用该头文件只需要定义即可
+
+|函数名|返回值类型|参数，<参数>...|作用（功能）|
+|:-|:-:|:-:|:-|
+PluginName|const char *|-|给主程序插件名
+Start|void|int index|插件启动
+
+#### Start
+
+无返回值
+
+参数
+
+|参数名|类型|作用
+|-|-|-|
+index|int|插件唯一序号，类似于ID
 
 ### fillter
 |函数名|返回值类型|参数，<参数>...|作用（功能）|
 |:-|:-:|:-:|:-|
-[Fillter_AfterReceiveMessage](#fillter通用)|Bool|slb::ChatMessage|作用于收到消息后
-[Fillter_BeforeIntoRoom](#fillter通用)|Bool|slb::ChatMessage|作用于消息进入房间之前
+[Fillter_AfterReceiveMessage](#fillter通用)|Bool|slb::MessageContent|作用于收到消息后
+~~[Fillter_BeforeIntoRoom](#fillter通用)~~|Bool|slb::MessageContent|作用于消息进入“房间”之前
+[Fillter_BeforeSendMessage](#fillter通用)|Bool|slb::MessageContent|作用于在发出消息
 
 #### Fillter通用
 
@@ -71,7 +101,7 @@ true|通过（允许向下传递）
 false|过滤
 
 ```cpp
-bool Fillter_XXXXX(ChatMessage message)
+bool Fillter_XXXXX(MessageContent message)
 {
     bool _returnValue = true;
     /*Code*/
@@ -79,20 +109,31 @@ bool Fillter_XXXXX(ChatMessage message)
 }
 ```
 
+### 特殊
+
+#### Message的关键词匹配相关
+
+|函数名|返回值类型|参数，<参数>...|作用（功能）|
+|:-|:-:|:-:|:-|
+任意|void|slb::MessageContent|匹配到关键词触发调用
+
+#### Message消息处理组相关
+
+关键词无匹配则触发此分类，传递执行
+
+|函数名|返回值类型|参数，<参数>...|作用（功能）|
+|:-|:-:|:-:|:-|
+任意|bool|slb::MessageContent|没匹配到关键词时触发（返回值为真允许传递执行下一个，逆否）
+
 ## 程序接口定义
 
 ### Room
 |函数名|返回值类型|参数，<参数>...|作用（功能）|
 |:-|:-:|:-:|:-|
-[Room_RegisterNewStaus](#Room_RegisterNewStaus)|bool|String|注册状态
+~~[Room_RegisterNewStaus](#Room_RegisterNewStaus)~~|bool|String|注册状态
 
-#### Room_RegisterNewStaus
+### Plugin
 
-|返回值|意义|
-|-|-|
-true|成功
-false|失败（存在冲突）
-
-```cpp
-bool Room_RegisterNewStaus(string stausName);
-```
+|函数名|返回值类型|参数，<参数>...|作用（功能）|
+|:-|:-:|:-:|:-|
+RegisterFunction|-|int index,const char * name|注册函数/功能

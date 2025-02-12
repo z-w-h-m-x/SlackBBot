@@ -5,6 +5,7 @@
 
 #include "Data/ServerData.h"
 #include "Network/ServerBase.h"
+#include "Network/ClientBase.h"
 
 #include "SLBLog.h"
 
@@ -15,5 +16,7 @@ extern std::string perfPath;
 extern SLBLog logger;
 
 extern IServer* server;
+extern IClient* client;
+extern httplib::Client clnt;
 
 extern bool disableLogSaving;

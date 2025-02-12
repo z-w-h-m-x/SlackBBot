@@ -30,6 +30,8 @@
 #include "Processor/InitializingFramework.h"
 #include "Plugin/PluginManager.h"
 #include "Network/ReportingServer/OneBot11.h"
+#include "Network/Client/NapCat.h"
+#include "Processor/MessageQueueProcessor.h"
 
 using namespace std;
 
@@ -45,6 +47,7 @@ int main(int argc,char* argv[])
 
     //获取配置目录
     perfPath = SDL_GetPrefPath("SlackBotDev","SlackBot");
+    programPath = SDL_GetBasePath();
 
     //命令行
     RegisterCommandRule();
@@ -55,7 +58,7 @@ int main(int argc,char* argv[])
     cout<<ProjectName<<" "<<ProjectVersion<<endl
         <<"Built in "<<CMAKE_SYSTEM_NAME<<endl;
 
-    if ( !LoadPlugin() )
+    if ( !LoadAllPlugin() )
     {
         logger.PrintError("The plugin loading state is abnormal");
     }
@@ -65,6 +68,13 @@ int main(int argc,char* argv[])
 
     server->Init();
     server->Run("0.0.0.0",11451);
+
+    Napcat napcatC;
+    client = &napcatC;
+
+    client->Init();
+
+    MessageProcessorInit();
 
     std::cout << "Press Enter to stop the server..." << std::endl;
     std::cin.get();  // 等待用户按下回车键
@@ -76,6 +86,7 @@ void Stop()
 {
     logger.Screen("wait server close");
     server->Stop();
+    MessageProcessorStop();
     ProgramQuit();
 }
 

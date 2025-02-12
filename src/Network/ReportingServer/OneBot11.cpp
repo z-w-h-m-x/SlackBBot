@@ -7,12 +7,13 @@
 
 #include "json.hpp"
 
+#include "Message/MessageDefinition.h"
+#include "Processor/MessageQueueProcessor.h"
+
 using std::string;
 using std::map;
 using std::chrono::system_clock;
 using nlohmann::json;
-
-httplib::Client client("192.168.1.36",3000);
 
 map<string,int> postTypeMap = 
 {
@@ -42,7 +43,9 @@ bool Server_OneBot11::Init()
     }
 
     svr.Post("/", [this](const httplib::Request& req,httplib::Response& res){
+        MessageContent message;
         json body = json::parse(req.body.c_str());
+        res.status = 200;
         if (body["post_type"].is_string())//is json from onebot
         {
             string post_type = body["post_type"];
@@ -50,58 +53,66 @@ bool Server_OneBot11::Init()
             switch (postTypeMap[post_type])
             {
             case 1://meta_event
-                if (body["meta_event_type"].is_string())
-                {   string meta_event_type = body["meta_event_type"];
-                    switch (metaEventTypeMap[meta_event_type])
-                    {
-                    case 1://heartbeat
-                        HeartBeat();
-                        logger.Screen(self_id + "hit server");
-                        count++;//合规计数
-                        break;
-
-                    default:
-                        break;
-                    }
-                }
+                //保留
                 break;
             
             case 2://message
                 if (body["message_type"].is_string())
                 {   string message_type = body["message_type"];
-                    std::stringstream reply;
                     switch (messageTypeMap[message_type])
                     {
                     case 1://private
-                        count++;//合规计数
-                        reply<< "{\"reply\":\"Hit x" << count << "\"}";
-                        logger.Screen(reply.str());
-                        res.status=200;
-                        res.set_content(reply.str(),"application/json");
+                        message.sendID.isGroup = false;
+                        if (messageTypeMap[body["sub_type"]] == 9901)
+                            message.sendID.subType = private_friend;
+                        else if (messageTypeMap[body["sub_type"]] == 9902)
+                            message.sendID.subType = private_group;
+                        else if (messageTypeMap[body["sub_type"]] == 9903)
+                            message.sendID.subType = private_other;
+
+                        message.sendID.userID = body["user_id"];
+                        message_type = body["message"][0]["type"];
+                        if (message_type == "text")
+                        {
+                            message_type = body["message"][0]["data"]["text"];
+                            message.content = message_type.c_str();
+                        }
+
+                        ReceiveMessage(message);
+
                         break;
                     
                     case 2://group
-                        reply<< "Hit x" << count;
                         if (body["message"][0]["type"].is_string())
                         {
+                            message.sendID.isGroup = true;
                             string s = body["message"][0]["type"];
                             string qq = body["message"][0]["data"]["qq"];
-                            int id = body["group_id"];
-                            if ( (s=="at" && atoi(qq.c_str()) == self_id) || s == "shake") 
+                            if ( s=="at" && atoi(qq.c_str()) == self_id )
                             {
-                                count++;//合规计数
-                                json j;
-                                j["group_id"] = id;
-                                j["message"] = reply.str();
-                                j["auto_escape"] = true;
-                                Sleep(1000);
-                                auto post_res = client.Post("/send_group_msg_rate_limited",j.dump(),"application/json");
-                                if (post_res && post_res->status == 200) {
-                                    
-                                } else {
-                                    std::cout << "POST request failed" << std::endl;
-                                }
+                                message.sendID.messageType = at;
                             }
+                            if ( s == "shake" )
+                            {
+                                message.sendID.messageType = poke;
+                            }
+                            if ( s == "text")
+                            {
+                                qq = body["message"][0]["data"]["text"];
+                                message.content = qq.c_str();
+                            }
+                            int id = body["group_id"];
+                            message.sendID.groupID = id;
+                            message.sendID.userID = body["user_id"];
+
+                            if (messageTypeMap[body["sub_type"]] == 9951)
+                                message.sendID.subType = group_normal;
+                            else if (messageTypeMap[body["sub_type"]] == 9952)
+                                message.sendID.subType = group_anonymous;
+                            else if (messageTypeMap[body["sub_type"]] == 9953)
+                                message.sendID.subType = group_notice;
+
+                            ReceiveMessage(message);
                         }
                         break;
 
@@ -112,34 +123,36 @@ bool Server_OneBot11::Init()
                 break;
 
             case 3://notice
-                if (body["notice_type"].is_string())
-                {   string notice_type = body["notice_type"];
-                    std::stringstream reply;
-                    if (notice_type == "notify")
-                    {
-                        string sub_type = body["sub_type"];
-                        if (sub_type=="poke")
-                        {
-                            count++;//合规计数
-                            reply<< "Hit x" << count;
-                            if (body["group_id"].is_number())
-                            {
-                                int id = body["group_id"];
-                                json j;
-                                j["group_id"] = id;
-                                j["message"] = reply.str();
-                                j["auto_escape"] = true;
-                                Sleep(1000);
-                                auto post_res = client.Post("/send_group_msg_rate_limited",j.dump(),"application/json");
-                                if (post_res && post_res->status == 200) {
-                                    std::cout << "POST request succeeded: " << post_res->body << std::endl;
-                                } else {
-                                    std::cout << "POST request failed" << std::endl;
-                                }
-                            }
-                        }
-                    }
-                }
+                // if (body["notice_type"].is_string())
+                // {   string notice_type = body["notice_type"];
+                //     MessageContent message;
+                //     if (notice_type == "notify")
+                //     {
+                        
+                //         string sub_type = body["sub_type"];
+                //         if (sub_type=="poke")
+                //         {
+
+                //             count++;//合规计数
+                //             reply<< "Hit x" << count;
+                //             if (body["group_id"].is_number())
+                //             {
+                //                 int id = body["group_id"];
+                //                 json j;
+                //                 j["group_id"] = id;
+                //                 j["message"] = reply.str();
+                //                 j["auto_escape"] = true;
+                //                 Sleep(1000);
+                //                 auto post_res = clientE.Post("/send_group_msg_rate_limited",j.dump(),"application/json");
+                //                 if (post_res && post_res->status == 200) {
+                //                     std::cout << "POST request succeeded: " << post_res->body << std::endl;
+                //                 } else {
+                //                     std::cout << "POST request failed" << std::endl;
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
                 break;
 
             default:
