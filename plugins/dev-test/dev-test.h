@@ -3,4 +3,3 @@
 // The actual use is "SlackBot/Plugin_Base.h" (if you import the compiled include directory) （Machine translation）
 
 Plugin_Extern bool Fillter_AfterReceiveMessage(MessageContent);
-Plugin_Extern void Init();

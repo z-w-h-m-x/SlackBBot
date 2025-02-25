@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(SlackBot VERSION 0.0.0.1)
+project(SlackBot VERSION 0.0.1.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./bin/)
@@ -15,11 +15,18 @@ include_directories(
     thirdparty/
 )
 
+if(MSVC)
+    add_compile_options(/utf-8)
+else()
+    add_compile_options(-finput-charset=UTF-8 -fexec-charset=UTF-8)
+endif()
+
 aux_source_directory(src/Plugin SlackBotPLUGIN_FILES)
 aux_source_directory(src SlackBot_SRC)
 aux_source_directory(src/Data SlackBot_Data_SRC)
 aux_source_directory(src/Processor SlackBot_Processor_SRC)
 aux_source_directory(src/Plugin SlackBot_Plugin_SRC)
+aux_source_directory(src/Message SlackBot_Message_SRC)
 aux_source_directory(src/Network Network)
 aux_source_directory(src/Network/ReportingServer Network_Server)
 aux_source_directory(src/Network/Client Network_Client)
@@ -42,6 +49,7 @@ add_executable(slackbot
     ${Network}
     ${Network_Server}
     ${Network_Client}
+    ${SlackBot_Message_SRC}
     src/Processor/QOE/qoeArg.cpp
 )
 
@@ -58,4 +66,4 @@ file(COPY "include/Plugin/Plugin/" DESTINATION "./bin/include/${PROJECT_NAME}/")
 file(COPY "doc/" DESTINATION "./bin/PluginDevelopmentDocumentation/")
 #file(COPY "NOTICE.txt" DESTINATION "./bin/")
 
-file(COPY "include/Message/MessageDefinition.h" DESTINATION "./bin/include/${PROJECT_NAME}/MessageDefinition.h")
+file(COPY "include/Message/MessageDefinition.h" DESTINATION "./bin/include/${PROJECT_NAME}/Message/")

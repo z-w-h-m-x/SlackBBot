@@ -16,7 +16,7 @@ std::map<int,void*> plugins;//plugin index, handle
 
 typedef const char * (*iPluginName)();
 typedef void (*iRF)(int,const char *);
-typedef void (*iRSF)(int,const char *, SpecialType, const char*);
+typedef void (*iRSF)(int,const char *, SpecialType, int);
 typedef void (*iSM)(MessageContent);
 typedef void (*iInit)(int,iRF,iRSF,iSM);
 typedef void (*pInit)();
@@ -117,17 +117,19 @@ Function_Extern void RegisterFunction(int i,const char * name)
 
     try
     {
-        logger<<mapName.count(name);
         if (mapName.count(name)>0)
         {   //存在
             switch (mapName[std::string(name)])
             {
             case 1101:
-                logger<<"push";
+                logger<<name;
                 Fillter_AfterReceiveMessage.push_back((Fillter)tryGetFunction(plugins[i],name));
+                logger<<std::string(name) + " OK";
                 break;
             case 1201:
+                logger<<name;
                 Fillter_BeforeSendMessage.push_back((Fillter)tryGetFunction(plugins[i],name));
+                logger<<std::string(name) + " OK";
                 break;
             default:
                 break;
@@ -144,8 +146,33 @@ Function_Extern void RegisterFunction(int i,const char * name)
     }
 }
 
-Function_Extern void RegisterSpecialFunction(int index,const char * name,SpecialType type,const char * parm)
+Function_Extern void RegisterSpecialFunction(int index,const char * name,SpecialType type,int parm)
 {
     if (plugins.find(index) == plugins.end())
         return ;
+    
+    try {
+
+    switch (type)
+    {
+    case Message_Normal:
+        logger<<name;
+        MessageNormal.push_back((Msg_Normal)tryGetFunction(plugins[index],name));
+        break;
+    
+    case Message_Tirgger:
+        IMessageType mType = IMessageType(parm);
+
+        if (mType == normal) break;
+
+        logger<<name;
+
+        MessageTirgger[mType].push_back((Msg_Tirgger)tryGetFunction(plugins[index],name));
+        break;
+
+    }
+
+    logger<<std::string(name) + " OK";
+
+    } catch(const char * e) {logger.PrintError(e);};
 }

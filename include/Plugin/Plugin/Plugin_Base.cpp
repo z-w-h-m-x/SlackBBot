@@ -3,11 +3,11 @@
 iRF RegisterFunction;
 iRSF RegisterSpecialFunction;
 iSM SendMessage;
-int index;
+int pIndex;
 
 Plugin_Extern void iInit(int i,iRF rf, iRSF rsf,iSM sm)
 {
-    index = i;
+    pIndex = i;
     RegisterFunction = rf;
     RegisterSpecialFunction = rsf;
     SendMessage = sm;
@@ -15,9 +15,14 @@ Plugin_Extern void iInit(int i,iRF rf, iRSF rsf,iSM sm)
 
 void SubmitFunction(const char * name)
 {
-    RegisterFunction(index,name);
+    RegisterFunction(pIndex,name);
 }
-void SubmitSpecialFunction(SpecialType type,const char * name,const char * parm)
+void SubmitSpecialFunction(SpecialType type,const char * name,int parm)
 {
-    RegisterSpecialFunction(index,name,type,parm);
+    RegisterSpecialFunction(pIndex,name,type,parm);
+}
+
+void SubmitMessageTrigger(IMessageType mType,const char * name)
+{
+    RegisterSpecialFunction(pIndex,name,Message_Tirgger,mType);
 }

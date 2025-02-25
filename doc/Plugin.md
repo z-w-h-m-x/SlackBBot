@@ -74,7 +74,8 @@ in MessageDefinition.h
 |函数名|返回值类型|参数，<参数>...|作用（功能）|
 |:-|:-:|:-:|:-|
 PluginName|const char *|-|给主程序插件名
-Start|void|int index|插件启动
+Init|void|-|插件初始化
+~~Start~~|void|int index|~~插件启动~~
 
 #### Start
 

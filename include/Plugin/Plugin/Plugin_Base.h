@@ -11,17 +11,20 @@
 //dll导出定义
 
 typedef void (*iRF)(int,const char *);
-typedef void (*iRSF)(int,const char *, SpecialType, const char*);
+typedef void (*iRSF)(int,const char *, SpecialType, int);
 typedef void (*iSM)(MessageContent);
 
 extern iRF RegisterFunction;
 extern iRSF RegisterSpecialFunction;
 extern iSM SendMessage;
-extern int index;
+extern int pIndex;
 
 Plugin_Extern const char * PluginName();
+Plugin_Extern void Init();
 
 Plugin_Extern void iInit(int ,iRF, iRSF, iSM);
 
 void SubmitFunction(const char * name);
-void SubmitSpecialFunction(SpecialType,const char * name,const char * parm);
+void SubmitSpecialFunction(SpecialType,const char * name,int parm);
+
+void SubmitMessageTrigger(IMessageType,const char * name);

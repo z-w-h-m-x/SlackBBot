@@ -8,6 +8,7 @@
 #include "json.hpp"
 
 #include "Message/MessageDefinition.h"
+#include "Message/iMessageDefinition.h"
 #include "Processor/MessageQueueProcessor.h"
 
 using std::string;
@@ -26,14 +27,20 @@ map<string,int> metaEventTypeMap =
 map<string,int> messageTypeMap = //sub type(99xx),message block(50xx)
 {
     {"private",1},{"group",2},
-    {"at",5001},{"shake",5002},
-    {"friend",9901},{"group",9902},{"other",9903},{"normal",9951},{"anonymous",9952},{"notice",9953}//sub type(private:xx<50,group:xx>=50)
+    {"at",5001},{"shake",5002},{"text",5003},{"face",5004},{"image",5005},{"record",5006},
+                {"video",5007},{"rps",5008},{"dice",5009},{"poke",5010},{"anonymous",5011},
+                {"share",5012},{"contact",5013},{"location",5014},{"music",5015},
+                {"reply",5016},{"forward",5017},{"node",5018},{"xml",5019},{"json",5020},
+    {"friend",9901},{"group",9902},{"other",9903},{"normal",9951},
+                {"anonymous",9952},{"notice",9953}//sub type(private:xx<50,group:xx>=50)
 };
 map<string,int> noticeTypeMap = //sub type(99xx)
 {
     {"notify",1},
     {"poke",9901}
 };
+
+void MessageArrayProcessor(json,iMessageContent*,int);
 
 bool Server_OneBot11::Init()
 {
@@ -43,7 +50,7 @@ bool Server_OneBot11::Init()
     }
 
     svr.Post("/", [this](const httplib::Request& req,httplib::Response& res){
-        MessageContent message;
+        iMessageContent message;
         json body = json::parse(req.body.c_str());
         res.status = 200;
         if (body["post_type"].is_string())//is json from onebot
@@ -71,12 +78,14 @@ bool Server_OneBot11::Init()
                             message.sendID.subType = private_other;
 
                         message.sendID.userID = body["user_id"];
-                        message_type = body["message"][0]["type"];
-                        if (message_type == "text")
-                        {
-                            message_type = body["message"][0]["data"]["text"];
-                            message.content = message_type.c_str();
-                        }
+                        // message_type = body["message"][0]["type"];
+                        // if (message_type == "text")
+                        // {
+                        //     message_type = body["message"][0]["data"]["text"];
+                        //     message.content = message_type.c_str();
+                        // }
+
+                        MessageArrayProcessor(body["message"],&message,self_id);
 
                         ReceiveMessage(message);
 
@@ -86,24 +95,26 @@ bool Server_OneBot11::Init()
                         if (body["message"][0]["type"].is_string())
                         {
                             message.sendID.isGroup = true;
-                            string s = body["message"][0]["type"];
-                            string qq = body["message"][0]["data"]["qq"];
-                            if ( s=="at" && atoi(qq.c_str()) == self_id )
-                            {
-                                message.sendID.messageType = at;
-                            }
-                            if ( s == "shake" )
-                            {
-                                message.sendID.messageType = poke;
-                            }
-                            if ( s == "text")
-                            {
-                                qq = body["message"][0]["data"]["text"];
-                                message.content = qq.c_str();
-                            }
+                            // string s = body["message"][0]["type"];
+                            // string qq = body["message"][0]["data"]["qq"];
+                            // if ( s=="at" && atoi(qq.c_str()) == self_id )
+                            // {
+                            //     message.sendID.messageType = at;
+                            // }
+                            // if ( s == "shake" )
+                            // {
+                            //     message.sendID.messageType = poke;
+                            // }
+                            // if ( s == "text")
+                            // {
+                            //     qq = body["message"][0]["data"]["text"];
+                            //     message.content = qq.c_str();
+                            // }
                             int id = body["group_id"];
                             message.sendID.groupID = id;
                             message.sendID.userID = body["user_id"];
+
+                            MessageArrayProcessor(body["message"],&message,self_id);
 
                             if (messageTypeMap[body["sub_type"]] == 9951)
                                 message.sendID.subType = group_normal;
@@ -209,4 +220,38 @@ void Server_OneBot11::HeartBeatProcessor()
 
         Sleep(1000);
     }
+}
+
+void MessageArrayProcessor(json body,iMessageContent* message,int self_id)
+{
+    string content = "";
+    if (body.is_array())
+    {
+    for (const auto item : body)
+    {
+        string msgType = item["type"];
+        string tmp1="";
+        switch (messageTypeMap[msgType])
+        {
+        case 5001://AT
+            tmp1 = item["data"]["qq"];
+            if ( atoi(tmp1.c_str()) == self_id)
+                message->sendID.messageType = at;
+            break;
+        case 5003:
+            if (item["data"]["text"].is_string())
+            {
+                tmp1 = item["data"]["text"];
+                content += tmp1;
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+        
+    }
+
+    message->contentS = content;
 }

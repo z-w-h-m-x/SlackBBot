@@ -44,10 +44,11 @@ struct SendID //发送信息
     long long userID;//收到时是发送者，发送时是目标。发送至群聊中除了部分action外，这个没用
     int serverID = 0;//serverType. This is the index of vector
 };
-
+#pragma pack(push, 1)
 struct MessageContent
 {
     SendID sendID;
-    const char * content;
+    const char * content = "";
     bool isEmpty = false;
 };
+#pragma pack(pop)

@@ -6,6 +6,23 @@
 
 using nlohmann::json;
 
+std::string clean_utf8(const char* data) {
+    std::string result;
+    while (*data != '\0') {
+        uint8_t byte = static_cast<uint8_t>(*data);
+        if ((byte <= 0x7F) || 
+            ((byte & 0xE0) == 0xC0 && (data[1] & 0xC0) == 0x80) ||
+            ((byte & 0xF0) == 0xE0 && (data[1] & 0xC0) == 0x80 && (data[2] & 0xC0) == 0x80) ||
+            ((byte & 0xF8) == 0xF0 && (data[1] & 0xC0) == 0x80 && (data[2] & 0xC0) == 0x80 && (data[3] & 0xC0) == 0x80)) {
+            result += *data;
+        } else {
+            result += '?'; // 替换非法字符
+        }
+        data++;
+    }
+    return result;
+}
+
 bool Napcat::Init()
 {
     clnt = httplib::Client("127.0.0.1",3000);
@@ -15,18 +32,38 @@ bool Napcat::Init()
 bool Napcat::iSendMessage(MessageContent message)
 {
     json j;
+    int i = 0;
+    std::string tmp;
+
     j["auto_escape"] = true;
     if (message.sendID.isGroup)
-    {
         j["group_id"] = message.sendID.groupID;
-        j["message"] = message.content;
-        clnt.Post("/send_group_msg",j.dump(),"application/json");
-    }
     else
-    {
         j["user_id"] = message.sendID.userID;
-        j["message"] = message.content;
-        clnt.Post("/send_private_msg",j.dump(),"application/json");
+
+    
+    j["message"] = json::array();
+
+    switch (message.sendID.messageType)
+    {
+    case at:
+        j["message"][0]["type"] = "at";
+        j["message"][0]["data"]["qq"] = message.sendID.userID;
+        i++;
+        break;
+    
+    default:
+        break;
     }
+
+    j["message"][i]["type"] = "text";
+    tmp = message.content;
+    j["message"][i]["data"]["text"] = tmp;
+
+    if (message.sendID.isGroup)
+        clnt.Post("/send_group_msg",j.dump(),"application/json");
+    else
+        clnt.Post("/send_private_msg",j.dump(),"application/json");
+
     return true;
 }

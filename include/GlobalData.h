@@ -20,3 +20,5 @@ extern IClient* client;
 extern httplib::Client clnt;
 
 extern bool disableLogSaving;
+
+std::string LetCCtoString(const char *);

@@ -11,3 +11,10 @@ IClient* client;
 httplib::Client clnt("127.0.0.1");
 
 bool disableLogSaving = false;
+
+std::string LetCCtoString(const char * c)
+{
+    std::string tmp;
+    tmp = c;
+    return tmp;
+}
