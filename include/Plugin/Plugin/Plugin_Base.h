@@ -16,7 +16,7 @@ typedef void (*iSM)(MessageContent);
 
 extern iRF RegisterFunction;
 extern iRSF RegisterSpecialFunction;
-extern iSM SendMessage;
+extern iSM BotSendMessage;
 extern int pIndex;
 
 Plugin_Extern const char * PluginName();

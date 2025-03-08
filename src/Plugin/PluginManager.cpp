@@ -71,7 +71,7 @@ bool LoadAllPlugin()
 
             plugins[index] = handle;
             pluginPath[getPluginName()] = i;
-            iiInit(index,RegisterFunction,RegisterSpecialFunction,sendMessage);
+            iiInit(index,RegisterFunction,RegisterSpecialFunction,SLB_SendMessage);
 
             std::ostringstream oss;
             oss <<"Load Plugin: " << getPluginName() << " from " << i;
@@ -106,8 +106,8 @@ void* tryGetFunction(void* handle,const char* functionName)
 
 std::map<std::string,int> mapName =
 {   //1xxx fillter - 1oxx 1=Receive 2=Send 
-    {"Fillter_AfterReceiveMessage",1101},
-    {"Fillter_BeforeSendMessage",1201}
+    {"Filter_AfterReceiveMessage",1101},
+    {"Filter_BeforeSendMessage",1201}
 };
 
 Function_Extern void RegisterFunction(int i,const char * name)
@@ -123,12 +123,12 @@ Function_Extern void RegisterFunction(int i,const char * name)
             {
             case 1101:
                 logger<<name;
-                Fillter_AfterReceiveMessage.push_back((Fillter)tryGetFunction(plugins[i],name));
+                SLB_Filter_AfterReceiveMessage.push_back((Filter)tryGetFunction(plugins[i],name));
                 logger<<std::string(name) + " OK";
                 break;
             case 1201:
                 logger<<name;
-                Fillter_BeforeSendMessage.push_back((Fillter)tryGetFunction(plugins[i],name));
+                SLB_Filter_BeforeSendMessage.push_back((Filter)tryGetFunction(plugins[i],name));
                 logger<<std::string(name) + " OK";
                 break;
             default:
@@ -157,7 +157,7 @@ Function_Extern void RegisterSpecialFunction(int index,const char * name,Special
     {
     case Message_Normal:
         logger<<name;
-        MessageNormal.push_back((Msg_Normal)tryGetFunction(plugins[index],name));
+        SLB_MessageNormal.push_back((Msg_Normal)tryGetFunction(plugins[index],name));
         break;
     
     case Message_Tirgger:
@@ -167,7 +167,7 @@ Function_Extern void RegisterSpecialFunction(int index,const char * name,Special
 
         logger<<name;
 
-        MessageTirgger[mType].push_back((Msg_Tirgger)tryGetFunction(plugins[index],name));
+        SLB_MessageTirgger[mType].push_back((Msg_Tirgger)tryGetFunction(plugins[index],name));
         break;
 
     }

@@ -19,10 +19,10 @@ std::mutex sendMutex;
 std::thread tPendingProcessor;
 std::thread tSendProcessor;
 
-std::list<Fillter> Fillter_AfterReceiveMessage;
-std::list<Fillter> Fillter_BeforeSendMessage;
-std::list<Msg_Normal> MessageNormal;
-std::map<IMessageType,std::list<Msg_Tirgger>> MessageTirgger;
+std::list<Filter> SLB_Filter_AfterReceiveMessage;
+std::list<Filter> SLB_Filter_BeforeSendMessage;
+std::list<Msg_Normal> SLB_MessageNormal;
+std::map<IMessageType,std::list<Msg_Tirgger>> SLB_MessageTirgger;
 
 //上报消息队列处理
 void PendingProcessor();
@@ -30,7 +30,7 @@ void PendingProcessor();
 void SendProcessor();
 bool needStop = false;
 
-bool MessageProcessorInit()
+bool SLB_MessageProcessorInit()
 {
     try
     {
@@ -49,7 +49,7 @@ bool MessageProcessorInit()
     return true;
 }
 
-void MessageProcessorStop()
+void SLB_MessageProcessorStop()
 {
     needStop=true;
     if (tPendingProcessor.joinable())
@@ -98,7 +98,7 @@ iMessageContent GetSMessage()
     }
 }
 
-Function_Extern void sendMessage(MessageContent content)
+Function_Extern void SLB_SendMessage(MessageContent content)
 {
     logger<<content.content;
     std::unique_lock<std::mutex> lock(sendMutex);
@@ -122,29 +122,30 @@ void PendingProcessor()
                 slow = false;
                 ec = 0;
             }
-            for (Fillter process : Fillter_AfterReceiveMessage)
+            for (Filter process : SLB_Filter_AfterReceiveMessage)
             {
                 if ( !process(message) )
-                    break;
+                    goto Filtered;
             }
 
             //消息类型匹配
             if (message.sendID.messageType != normal)
             {
-                if (MessageTirgger.find(message.sendID.messageType) != MessageTirgger.end())
+                if (SLB_MessageTirgger.find(message.sendID.messageType) != SLB_MessageTirgger.end())
                 {
-                    for (Msg_Tirgger F : MessageTirgger[message.sendID.messageType])
+                    for (Msg_Tirgger F : SLB_MessageTirgger[message.sendID.messageType])
                     {
                         F(message);
                     }
                 }
             }
             //normal
-            for (Msg_Normal F : MessageNormal)
+            for (Msg_Normal F : SLB_MessageNormal)
             {
                 if ( F(message) != true)
                     break;
             }
+Filtered: ;
         }
         else//为空队列
         {
@@ -180,7 +181,7 @@ void SendProcessor()
                 slow = false;
                 ec = 0;
             }
-            for (Fillter process : Fillter_BeforeSendMessage)
+            for (Filter process : SLB_Filter_BeforeSendMessage)
             {
                 if ( !process(message) )
                     break;

@@ -2,7 +2,7 @@
 
 iRF RegisterFunction;
 iRSF RegisterSpecialFunction;
-iSM SendMessage;
+iSM BotSendMessage;
 int pIndex;
 
 Plugin_Extern void iInit(int i,iRF rf, iRSF rsf,iSM sm)
@@ -10,7 +10,7 @@ Plugin_Extern void iInit(int i,iRF rf, iRSF rsf,iSM sm)
     pIndex = i;
     RegisterFunction = rf;
     RegisterSpecialFunction = rsf;
-    SendMessage = sm;
+    BotSendMessage = sm;
 }
 
 void SubmitFunction(const char * name)

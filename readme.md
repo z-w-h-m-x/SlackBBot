@@ -1,10 +1,10 @@
 # SlackBot
 
-暂时以Onebot11标准作为接口的API请求框架
-
-未来有更多
+暂时以Onebot11标准作为接口的API请求框架，未来有更多
 
 注意：项目名缩写为SLB
+
+项目处于早期开发阶段，很多都不完整，但是能用
 
 ## 免责声明
 
@@ -49,7 +49,8 @@ include/Plugin/Plugin文件夹中的内容不使用GPLv3协议，使用MIT（对
 
 目前，此项目只在Windows平台上使用MinGW生成过，暂时未测试其他平台和其他编译器，欢迎补充
 
-[[WIP]插件开发看这](./doc/Plugin.md)
+- [[WIP]插件开发看这](./doc/Plugin.md)   
+- [更多插件示例](https://github.com/z-w-h-m-x/SlackBot-Plugin-Examples)
 
 ### 需求
 
@@ -88,7 +89,7 @@ cmake .. -G "MinGW Makefiles"
 
 欢迎提交issue反馈或者贡献代码
 
-issue可使用中英任何一语（在文档翻译前估计都是中文（（（（（（（（（（（（）
+issue可使用中英任何一语（在文档翻译前估计都是中文（（（（）
 
 贡献代码规范
 

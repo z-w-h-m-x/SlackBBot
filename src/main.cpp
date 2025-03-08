@@ -79,7 +79,7 @@ int main(int argc,char* argv[])
 
     client->Init();
 
-    MessageProcessorInit();
+    SLB_MessageProcessorInit();
 
     std::cout << "Press Enter to stop the server..." << std::endl;
     std::cin.get();  // 等待用户按下回车键
@@ -91,7 +91,7 @@ void Stop()
 {
     logger.Screen("wait server close");
     server->Stop();
-    MessageProcessorStop();
+    SLB_MessageProcessorStop();
     ProgramQuit();
 }
 

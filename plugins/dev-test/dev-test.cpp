@@ -16,12 +16,12 @@ Plugin_Extern bool Fillter_AfterReceiveMessage(MessageContent message)
     if (message.sendID.isGroup && message.sendID.messageType == at)
     {
         tmp.content = "SlackBot A1 TEST.";
-        SendMessage(tmp);
+        BotSendMessage(tmp);
     }
     if (!message.sendID.isGroup)
     {
         tmp.content = "SlackBot A1 TEST.";
-        SendMessage(tmp);
+        BotSendMessage(tmp);
     }
     return true;
 }
