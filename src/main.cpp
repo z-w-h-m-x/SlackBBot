@@ -23,7 +23,12 @@
 #include "Processor/ProgramStop.h"
 
 #include "httplib.h"
+
+#ifdef _WIN32
 #include "windows.h"
+#elif __linux__
+#include "unistd.h"
+#endif
 
 #include "Data/Data.h"
 #include "Processor/CommandProcessor.h"

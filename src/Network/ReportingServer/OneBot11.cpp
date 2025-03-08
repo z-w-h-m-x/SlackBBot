@@ -40,7 +40,7 @@ map<string,int> noticeTypeMap = //sub type(99xx)
     {"poke",9901}
 };
 
-void MessageArrayProcessor(json,iMessageContent*,int);
+void MessageArrayProcessor(json,iMessageContent*,long long);
 
 bool Server_OneBot11::Init()
 {
@@ -56,7 +56,7 @@ bool Server_OneBot11::Init()
         if (body["post_type"].is_string())//is json from onebot
         {
             string post_type = body["post_type"];
-            int self_id = body["self_id"];
+            long long self_id = body["self_id"];
             switch (postTypeMap[post_type])
             {
             case 1://meta_event
@@ -222,7 +222,7 @@ void Server_OneBot11::HeartBeatProcessor()
     }
 }
 
-void MessageArrayProcessor(json body,iMessageContent* message,int self_id)
+void MessageArrayProcessor(json body,iMessageContent* message,long long self_id)
 {
     string content = "";
     if (body.is_array())
@@ -235,7 +235,7 @@ void MessageArrayProcessor(json body,iMessageContent* message,int self_id)
         {
         case 5001://AT
             tmp1 = item["data"]["qq"];
-            if ( atoi(tmp1.c_str()) == self_id)
+            if ( atoll(tmp1.c_str()) == self_id)
                 message->sendID.messageType = at;
             break;
         case 5003:
