@@ -1,4 +1,4 @@
-# SlackBot
+# SlackBBot
 
 暂时以Onebot11标准作为接口的API请求框架，未来有更多
 
@@ -50,7 +50,7 @@ include/Plugin/Plugin文件夹中的内容不使用GPLv3协议，使用MIT（对
 目前，此项目只在Windows平台上使用MinGW生成过，暂时未测试其他平台和其他编译器，欢迎补充
 
 - [[WIP]插件开发看这](./doc/Plugin.md)   
-- [更多插件示例](https://github.com/z-w-h-m-x/SlackBot-Plugin-Examples)
+- [更多插件示例](https://github.com/z-w-h-m-x/SlackBBot-Plugin-Examples)
 
 ### 需求
 
